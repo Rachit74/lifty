@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 
-from .forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm
+from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
 def accounts_home(request):
@@ -17,6 +18,10 @@ def user_profile(request):
     return render(request, 'accounts/profile.html', context=context)
 
 def register(request):
+    # redirect to profile if logged in
+    if request.user.is_authenticated():
+        return redirect('profile')
+    
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -35,18 +40,19 @@ def register(request):
     return render(request, 'accounts/register.html', context=context)
 
 def login_user(request):
+    # redirect the user to profile if already logged in
+    if request.user.is_authenticated:
+        return redirect('profile')
+    
     if request.method == "POST":
-        form = UserLoginForm(request, data=request.POST)
+        form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.success(request, "You are now logged in!")
-                return redirect('profile')
+            user = form.get_user() # get authenticated user
+            login(request, user)
+            messages.success(request, "You are now logged in!")
+            return redirect('profile')
     else:
-        form = UserLoginForm()
+        form = AuthenticationForm()
 
     context = {
         'form': form,
