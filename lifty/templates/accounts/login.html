@@ -1,17 +1,17 @@
 {% extends "accounts/base.html" %}
 
-{% block title %} Lifty | Register {% endblock %}
+{% block title %} Lifty | Login {% endblock %}
 
 {% block content %}
 
-<h3>Register</h3>
+<h3>Login</h3>
 
 {% if form %}
 
     <form method="POST">
         {% csrf_token %}
         {{ form }}
-        <button type="submit">Register</button>
+        <button type="submit">Login</button>
     </form>
 
 {% endif %}

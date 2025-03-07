@@ -1,0 +1,12 @@
+{% extends "accounts/base.html" %}
+
+{% block title %} Lifty | Profile {% endblock %}
+
+{% block content %}
+
+{% if user %}
+    {{ user.username }}
+    <a href="{% url 'logout' %}">Logout</a>
+{% endif %}
+
+{% endblock %}
